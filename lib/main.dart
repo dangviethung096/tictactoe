@@ -27,13 +27,14 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   String lastValue = "X";
   bool gameOver = false;
+  int turn = 0;
+  String result = "";
   List<int> scoreboard = [0, 0, 0, 0, 0, 0, 0, 0];
 
   Game game = Game();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     game.board = Game.initGameBoard();
   }
@@ -66,54 +67,79 @@ class _GameScreenState extends State<GameScreen> {
               mainAxisSpacing: 8.0,
               crossAxisSpacing: 8.0,
               crossAxisCount: Game.boardLength ~/ 3,
-              children: List.generate(Game.boardLength, (index) {
-                return InkWell(
-                  onTap: gameOver
-                      ? null
-                      : () {
-                          if (game.board![index] == Player.empty) {
-                            setState(() {
-                              game.board![index] = lastValue;
-                              if (lastValue == Player.x) {
-                                lastValue = Player.o;
-                              } else {
-                                lastValue = Player.x;
-                              }
-                            });
-                          }
-                        },
-                  child: Container(
-                    width: Game.blocSize,
-                    height: Game.blocSize,
-                    decoration: BoxDecoration(
-                      color: MainColor.secondaryColor,
-                      borderRadius: BorderRadius.circular(16.0),
-                    ),
-                    child: Center(
-                      child: Text(
-                        game.board![index],
-                        style: TextStyle(
-                          color: game.board![index] == "X"
-                              ? Colors.blue
-                              : Colors.pink,
-                          fontSize: 64.0,
+              children: List.generate(
+                Game.boardLength,
+                (index) {
+                  return InkWell(
+                    onTap: gameOver
+                        ? null
+                        : () {
+                            if (game.board![index] == Player.empty) {
+                              setState(() {
+                                game.board![index] = lastValue;
+                                turn++;
+                                gameOver = game.winnerCheck(
+                                    lastValue, index, scoreboard, 3);
+
+                                if (gameOver) {
+                                  result = "$lastValue win";
+                                } else if (!gameOver && turn == 9) {
+                                  result = "Hòa";
+                                  gameOver = true;
+                                }
+
+                                if (lastValue == Player.x) {
+                                  lastValue = Player.o;
+                                } else {
+                                  lastValue = Player.x;
+                                }
+                              });
+                            }
+                          },
+                    child: Container(
+                      width: Game.blocSize,
+                      height: Game.blocSize,
+                      decoration: BoxDecoration(
+                        color: MainColor.secondaryColor,
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      child: Center(
+                        child: Text(
+                          game.board![index],
+                          style: TextStyle(
+                            color: game.board![index] == "X"
+                                ? Colors.blue
+                                : Colors.pink,
+                            fontSize: 64.0,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }),
+                  );
+                },
+              ),
             ),
+          ),
+          SizedBox(
+            height: 25,
+          ),
+          Text(
+            result,
+            style: TextStyle(color: Colors.white, fontSize: 54.0),
           ),
           ElevatedButton.icon(
             onPressed: () {
               setState(() {
                 game.board = Game.initGameBoard();
                 lastValue = "X";
+                gameOver = false;
+                turn = 0;
+                result = "";
+                scoreboard = [0, 0, 0, 0, 0, 0, 0, 0];
               });
             },
             icon: Icon(Icons.replay),
-            label: Text("Repeat the Game"),
+            label: Text("Chơi lại"),
           ),
         ],
       ),
