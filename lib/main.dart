@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tictactoe/ui/theme/color.dart';
 import 'package:tictactoe/utils/game_logic.dart';
+import 'package:tictactoe/utils/player.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,14 +30,13 @@ class _GameScreenState extends State<GameScreen> {
   bool gameOver = false;
   int turn = 0;
   String result = "";
-  List<int> scoreboard = [0, 0, 0, 0, 0, 0, 0, 0];
 
   Game game = Game();
 
   @override
   void initState() {
     super.initState();
-    game.board = Game.initGameBoard();
+    game.initGameBoard();
   }
 
   @override
@@ -78,8 +78,8 @@ class _GameScreenState extends State<GameScreen> {
                               setState(() {
                                 game.board![index] = lastValue;
                                 turn++;
-                                gameOver = game.winnerCheck(
-                                    lastValue, index, scoreboard, 3);
+                                gameOver =
+                                    game.winnerCheck(lastValue, index, 3);
 
                                 if (gameOver) {
                                   result = "$lastValue win";
@@ -130,12 +130,11 @@ class _GameScreenState extends State<GameScreen> {
           ElevatedButton.icon(
             onPressed: () {
               setState(() {
-                game.board = Game.initGameBoard();
+                game.initGameBoard();
                 lastValue = "X";
                 gameOver = false;
                 turn = 0;
                 result = "";
-                scoreboard = [0, 0, 0, 0, 0, 0, 0, 0];
               });
             },
             icon: Icon(Icons.replay),

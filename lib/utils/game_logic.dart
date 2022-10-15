@@ -1,20 +1,18 @@
-class Player {
-  static const x = "X";
-  static const o = "O";
-  static const empty = "";
-}
+import './player.dart';
 
 class Game {
   static final boardLength = 9;
   static final blocSize = 100.0;
 
   List<String>? board;
+  List<int> scoreboard = [0, 0, 0, 0, 0, 0, 0, 0];
 
-  static List<String>? initGameBoard() =>
-      List.generate(boardLength, (index) => Player.empty);
+  initGameBoard() {
+    board = List.generate(boardLength, (index) => Player.empty);
+    scoreboard = List.generate(8, (index) => 0);
+  }
 
-  bool winnerCheck(
-      String player, int index, List<int> scoreboard, int gridSize) {
+  bool winnerCheck(String player, int index, int gridSize) {
     int row = index ~/ 3;
     int col = index % 3;
     int score = player == "X" ? 1 : -1;
