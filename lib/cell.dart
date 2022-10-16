@@ -14,6 +14,31 @@ class Cell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         child: InkWell(
+          onTap: gameOver
+                        ? null
+                        : () {
+                            if (game.board![index] == Player.empty) {
+                              setState(() {
+                                game.board![index] = lastValue;
+                                turn++;
+                                gameOver =
+                                    game.winnerCheck(lastValue, index, 3);
+
+                                if (gameOver) {
+                                  result = "$lastValue win";
+                                } else if (!gameOver && turn == 9) {
+                                  result = "Hòa";
+                                  gameOver = true;
+                                }
+
+                                if (lastValue == Player.x) {
+                                  lastValue = Player.o;
+                                } else {
+                                  lastValue = Player.x;
+                                }
+                              });
+                            }
+                          },,
       child: Container(
         width: Game.blocSize,
         height: Game.blocSize,
